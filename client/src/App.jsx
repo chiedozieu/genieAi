@@ -10,12 +10,12 @@ import GenerateImages from "./pages/GenerateImages";
 import RemoveBackground from "./pages/RemoveBackground";
 import RemoveObject from "./pages/RemoveObject";
 import ReviewResume from "./pages/ReviewResume";
-import Navbar from "./components/Navbar";
+
 
 const App = () => {
   return (
     <div className="">
-    <Navbar />
+    
       <Routes>
         <Route path="/" element={<Home />} />
 
