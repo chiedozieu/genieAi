@@ -48,7 +48,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
               end={to === "/ai"}
               onClick={() => setSidebar(false)}
               className={({ isActive }) =>
-                `px-3.5 py-2.5 flex items-center gap-3 rounded ${
+                `px-3.5 py-2.5 flex items-center gap-3 rounded group hover:bg-gray-100 ${
                   isActive
                     ? "bg-gradient-to-r from-[#06d3c5] to-[#029db1] text-white"
                     : ""
@@ -57,7 +57,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
             >
               {({ isActive }) => (
                 <>
-                  <Icon className={`size-4 ${isActive ? "text-white" : ""}`} />
+                  <Icon className={`size-4 ${isActive ? "text-white" : ""} group-hover:animate-bounce transition-all duration-700`} />
                   <span className={`text-sm ${isActive ? "text-white" : ""}`}>
                     {label}
                   </span>

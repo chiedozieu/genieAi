@@ -12,15 +12,14 @@ const WriteArticle = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    
-  }
+  };
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 to-slate-700">
+    <div className="h-full overflow-y-scroll p-4 flex items-start flex-wrap gap-2 to-slate-700">
       {/* left column */}
       <form
-      onSubmit={onSubmitHandler}
+        onSubmit={onSubmitHandler}
         action=""
-        className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200/50"
+        className="w-full max-w-md p-4 bg-white rounded-lg border border-gray-200/50"
       >
         <div className="flex items-center gap-3">
           <Sparkles className="w-5 text-sky-500" />
@@ -52,15 +51,27 @@ const WriteArticle = () => {
               {length.text}
             </span>
           ))}
-        </div> <br />
+        </div>{" "}
+        <br />
         <button className="w-full flex items-center gap-2 rounded-md justify-center text-white bg-gradient-to-r from-[#0395f0]  to-[#015fca] py-2 px-4 cursor-pointer group hover:bg-gradient-to-r hover:from-[#015fca] hover:to-[#0395f0]">
-          <Edit className="w-5 group-hover:-translate-x-0.5 transition duration-300"/>
+          <Edit className="w-5 group-hover:-translate-x-0.5 transition duration-300" />
           <span className="">Generate Article</span>
         </button>
       </form>
 
       {/* right column */}
-      <div className="text-xl font-semibold"></div>
+      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200/50 min-h-96 max-h-[600px]">
+        <div className="flex items-center gap-3">
+          <Edit className="size-5 text-sky-500" />
+          <h1 className="text-xl font-semibold"> Generate Article </h1>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-sm flex flex-col items-center gap-5">
+            <Edit className="size-9" />
+            <p className="text-gray-600">Enter topic to generate article</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
