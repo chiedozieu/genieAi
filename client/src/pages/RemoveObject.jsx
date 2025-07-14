@@ -1,4 +1,4 @@
-import { Captions, Edit, Eraser, Scissors, Sparkles } from "lucide-react";
+import {Scissors, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 
 const RemoveObject = () => {

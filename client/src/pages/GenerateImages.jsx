@@ -1,4 +1,4 @@
-import { Captions, Edit, Image, Sparkles } from "lucide-react";
+import { Image, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 
 const GenerateImages = () => {
