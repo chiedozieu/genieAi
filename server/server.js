@@ -4,6 +4,7 @@ import cors from "cors";
 import { clerkMiddleware, requireAuth } from '@clerk/express'
 import aiRouter from "./routes/aiRoutes.js";
 import connectCloudinary from "./config/cloudinary.js";
+import userRouter from "./routes/userRoutes.js";
 
 
 
@@ -23,6 +24,7 @@ app.use(clerkMiddleware({
 
 
 app.use("/api/ai", requireAuth(), aiRouter);
+app.use("/api/user", requireAuth(), userRouter);
 
 
 const PORT = process.env.PORT || 3000;

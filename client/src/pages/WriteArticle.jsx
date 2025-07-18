@@ -1,5 +1,11 @@
 import { Edit, Sparkles } from "lucide-react";
 import React, { useState } from "react";
+import axios from "axios";
+import { useAuth } from "@clerk/clerk-react";
+import toast from "react-hot-toast";
+import Markdown from 'markdown-to-jsx'
+
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const WriteArticle = () => {
   const articleLength = [
@@ -9,9 +15,34 @@ const WriteArticle = () => {
   ];
   const [selectedLength, setSelectedLength] = useState(articleLength[0]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const { getToken } = useAuth();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    try {
+      setLoading(true);
+      const prompt = `Write an article about ${input} in ${selectedLength.text}`;
+      const { data } = await axios.post(
+        "/api/ai/generate-article",
+        { prompt, length: selectedLength.length },
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        }
+      );
+      if (data.success) {
+        setContent(data.content);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+    setLoading(false);
   };
   return (
     <div className="h-full overflow-y-scroll p-4 flex items-start flex-wrap gap-2 to-slate-700">
@@ -53,9 +84,18 @@ const WriteArticle = () => {
           ))}
         </div>{" "}
         <br />
-        <button className="w-full flex items-center gap-2 rounded-md justify-center text-white bg-gradient-to-r from-[#0395f0]  to-[#015fca] py-2 px-4 cursor-pointer group hover:bg-gradient-to-r hover:from-[#015fca] hover:to-[#0395f0]">
-          <Edit className="w-5 group-hover:-translate-x-0.5 transition duration-300" />
-          <span className="">Generate Article</span>
+        <button
+          disabled={loading}
+          className="w-full flex items-center gap-2 rounded-md justify-center text-white bg-gradient-to-r from-[#0395f0]  to-[#015fca] py-2 px-4 cursor-pointer group hover:bg-gradient-to-r hover:from-[#015fca] hover:to-[#0395f0]"
+        >
+          {loading ? (
+            <span className="size-4 my-1 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Edit className="w-5 group-hover:-translate-x-0.5 transition duration-600" />
+              Generate Article
+            </div>
+          )}
         </button>
       </form>
 
@@ -65,12 +105,20 @@ const WriteArticle = () => {
           <Edit className="size-5 text-sky-500" />
           <h1 className="text-xl font-semibold"> Generate Article </h1>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-sm flex flex-col items-center gap-5">
-            <Edit className="size-9" />
-            <p className="text-gray-600">Enter topic to generate article</p>
+        {!content ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-sm flex flex-col items-center gap-5">
+              <Edit className="size-9" />
+              <p className="text-gray-600">Enter topic to generate article</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-4 h-full overflow-y-scroll text-sm text-slate-600">
+            <div className="reset-tw">
+              <Markdown>{content}</Markdown>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
