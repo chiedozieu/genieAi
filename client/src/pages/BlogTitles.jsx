@@ -1,16 +1,57 @@
 import { Captions, Edit, Sparkles } from "lucide-react";
 import React, { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import Markdown from "markdown-to-jsx";
+import { useAuth } from "@clerk/clerk-react";
 
+
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 const BlogTitles = () => {
- const blogCategories = ['General', 'Technology', 'Health', 'Business', 'Lifestyle', 'Education', 'Travel', 'Food'];
+  const blogCategories = [
+    "General",
+    "Technology",
+    "Health",
+    "Business",
+    "Lifestyle",
+    "Education",
+    "Travel",
+    "Food",
+  ];
 
-   const [selectedCategory, setSelectedCategory] = useState('General');
-   const [input, setInput] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("General");
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const { getToken } = useAuth();
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    try {
+      setLoading(true);
+      const prompt = `Generate a blog title for the keyword ${input} in the category ${selectedCategory}`;
+      const { data } = await axios.post(
+        "/api/ai/generate-blog-title",
+        { prompt },
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        }
+      );
+      if (data.success) {
+        setContent(data.content);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+    setLoading(false);
   };
   return (
-     <div className="h-full overflow-y-scroll p-4 flex items-start flex-wrap gap-2 to-slate-700">
+    <div className="h-full overflow-y-scroll p-4 flex items-start flex-wrap gap-2 to-slate-700">
       {/* left column */}
       <form
         onSubmit={onSubmitHandler}
@@ -39,9 +80,7 @@ const BlogTitles = () => {
               onClick={() => setSelectedCategory(category)}
               key={category}
               className={`text-sm py-1 px-2 border-[#8E37EB] border rounded-full cursor-pointer ${
-                selectedCategory === category
-                  ? "bg-[#8E37EB] text-white"
-                  : ""
+                selectedCategory === category ? "bg-[#8E37EB] text-white" : ""
               }`}
             >
               {category}
@@ -49,9 +88,19 @@ const BlogTitles = () => {
           ))}
         </div>{" "}
         <br />
-        <button className="w-full flex items-center gap-2 rounded-md justify-center text-white bg-gradient-to-r from-[#8E37EB]  to-[#015fca] py-2 px-4 cursor-pointer group hover:bg-gradient-to-r hover:from-[#0395f0] hover:to-[#8E37EB]">
-          <Edit className="w-5 group-hover:-translate-x-0.5 transition duration-300" />
-          <span className="">Generate Title</span>
+        <button
+          disabled={loading}
+          type="submit"
+          className="w-full flex items-center gap-2 rounded-md justify-center text-white bg-gradient-to-r from-[#8E37EB]  to-[#015fca] py-2 px-4 cursor-pointer group hover:bg-gradient-to-r hover:from-[#0395f0] hover:to-[#8E37EB]"
+        >
+          {loading ? (
+            <span className="size-4 my-1 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Edit className="w-5 group-hover:-translate-x-0.5 transition duration-300" />
+              Generate Title
+            </div>
+          )}
         </button>
       </form>
 
@@ -61,15 +110,24 @@ const BlogTitles = () => {
           <Captions className="size-5 text-[#8E37EB]" />
           <h1 className="text-xl font-semibold"> Generated Titles </h1>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-sm flex flex-col items-center gap-5">
-            <Captions className="size-9" />
-            <p className="text-gray-600">Enter topic to generate Title</p>
+
+        {!content ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-sm flex flex-col items-center gap-5">
+              <Captions className="size-9" />
+              <p className="text-gray-600">Enter topic to generate Title</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-4 h-full overflow-y-scroll text-sm text-slate-600">
+            <div className="reset-tw">
+              <Markdown>{content}</Markdown>
+            </div>
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 };
 
 export default BlogTitles;

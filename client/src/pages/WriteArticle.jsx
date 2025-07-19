@@ -86,6 +86,7 @@ const WriteArticle = () => {
         <br />
         <button
           disabled={loading}
+          type="submit"
           className="w-full flex items-center gap-2 rounded-md justify-center text-white bg-gradient-to-r from-[#0395f0]  to-[#015fca] py-2 px-4 cursor-pointer group hover:bg-gradient-to-r hover:from-[#015fca] hover:to-[#0395f0]"
         >
           {loading ? (
